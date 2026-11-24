@@ -1,0 +1,20 @@
+lib/team-access.ts:5
+
+export async function principal(request: Request, env: Env): Promise<Principal | null> {
+  const email = trustedEmail(request);
+  if (!email) return null;
+  if (env.ADMIN_OWNER_EMAIL && email === env.ADMIN_OWNER_EMAIL.trim().toLowerCase()) return {
+    email,
+    name: 'Responsável pela barbearia',
+    owner: true
+  };
+  const row = await env.DB.prepare('SELECT email,name FROM sb_team_access WHERE email=? AND enabled=1').bind(email).first<{
+    email: string;
+    name: string;
+  }>();
+  return row ? {
+    email: row.email,
+    name: row.name,
+    owner: false
+  } : null;
+}

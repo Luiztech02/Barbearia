@@ -1,0 +1,23 @@
+# Dados e credenciais locais
+data/
+original/
+*.sqlite*
+*.db
+*.backup*
+*backup*.json
+.env
+.env.*
+!.env.example
+.dev.vars
+node_modules/
+__pycache__/
+*.pyc
+.wrangler/
+dist/
+.next/
+.sites-runtime/
+.DS_Store
+
+# Ambientes Python locais
+.venv/
+venv/

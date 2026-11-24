@@ -1,0 +1,46 @@
+web/domain.js:4
+
+export function publicProjection(s) {
+  const now = brazilNow();
+  return {
+    schema: 1,
+    settings: {
+      name: s.settings.name,
+      whatsapp: s.settings.whatsapp,
+      open: s.settings.open,
+      close: s.settings.close
+    },
+    barbers: s.barbers.map(b => ({
+      id: b.id,
+      name: b.name,
+      role: b.role
+    })),
+    services: s.services.map(({
+      id,
+      name,
+      price,
+      duration,
+      hair,
+      beard
+    }) => ({
+      id,
+      name,
+      price,
+      duration,
+      hair,
+      beard
+    })),
+    appointments: s.appointments.filter(a => a.status !== 'cancelled' && a.date >= now.date && a.date <= addDays(now.date, 90)).map((a, i) => ({
+      id: `occupied-${i}`,
+      date: a.date,
+      time: a.time,
+      duration: a.duration,
+      barberId: a.barberId,
+      status: 'scheduled'
+    })),
+    blocks: s.blocks.filter(b => b.date >= now.date),
+    expenses: [],
+    products: [],
+    movements: []
+  };
+}

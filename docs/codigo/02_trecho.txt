@@ -1,0 +1,24 @@
+web/visage.js:22
+
+if (!landmarkerPromise) landmarkerPromise = (async () => {
+  const {
+    FaceLandmarker,
+    FilesetResolver
+  } = await import('./assets/vision/vision_bundle.mjs');
+  const files = await FilesetResolver.forVisionTasks(new URL('./assets/vision/wasm', location.href).href);
+  return FaceLandmarker.createFromOptions(files, {
+    baseOptions: {
+      modelAssetPath: new URL('./assets/vision/face_landmarker.task', location.href).href,
+      delegate: 'CPU'
+    },
+    runningMode: 'IMAGE',
+    numFaces: 2,
+    minFaceDetectionConfidence: .6,
+    minFacePresenceConfidence: .6
+  });
+})();
+const model = await landmarkerPromise,
+  r = model.detect(canvas);
+if (!r.faceLandmarks?.length) throw Error('Não encontramos um rosto nítido. Use uma foto de frente e com boa luz.');
+if (r.faceLandmarks.length > 1) throw Error('Use uma foto com apenas uma pessoa.');
+return classify(r.faceLandmarks[0], canvas.width, canvas.height);

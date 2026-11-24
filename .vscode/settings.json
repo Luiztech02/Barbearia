@@ -1,0 +1,15 @@
+{
+  "python.testing.unittestEnabled": true,
+  "python.testing.pytestEnabled": false,
+  "python.testing.unittestArgs": [
+    "-v",
+    "test_server.py"
+  ],
+  "search.exclude": {
+    "**/__pycache__": true,
+    "data/**": true
+  },
+  "files.exclude": {
+    "**/__pycache__": true
+  }
+}

@@ -1,0 +1,21 @@
+web/visage.js:4
+
+export function classify(landmarks, width, height) {
+  const p = i => ({
+      x: landmarks[i].x * width,
+      y: landmarks[i].y * height
+    }),
+    dist = (a, b) => Math.hypot(p(a).x - p(b).x, p(a).y - p(b).y),
+    length = dist(10, 152),
+    cheeks = dist(234, 454),
+    jaw = dist(172, 397),
+    forehead = dist(54, 284),
+    ratio = length / cheeks,
+    tilt = Math.abs(p(33).y - p(263).y) / cheeks;
+  if (tilt > .14) throw Error('Endireite o rosto e envie uma foto sem inclinar a cabeça.');
+  if (ratio > 1.55) return 'long';
+  if (forehead / jaw > 1.22 && jaw / cheeks < .84) return 'heart';
+  if (ratio < 1.28) return 'round';
+  if (jaw / cheeks > .87 && ratio < 1.5) return 'square';
+  return 'oval';
+}

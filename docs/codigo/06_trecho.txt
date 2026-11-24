@@ -1,0 +1,19 @@
+auth.py:28
+
+def password_hash(password, salt):
+    return hashlib.pbkdf2_hmac('sha256', password.encode(), bytes.fromhex(salt), 310000).hex()
+
+
+def setup(connect, username, password, token):
+    if not isinstance(token, str) or not secrets.compare_digest(token, SETUP_TOKEN):
+        raise ValueError('Abra o link de primeiro acesso exibido na janela do Python.')
+    if not isinstance(username, str) or not 3 <= len(username.strip()) <= 80:
+        raise ValueError('Informe um usuário com 3 a 80 caracteres.')
+    if not isinstance(password, str) or not 10 <= len(password) <= 200:
+        raise ValueError('Use uma senha com pelo menos 10 caracteres.')
+    salt = secrets.token_hex(16)
+    with connect() as db:
+        db.execute('BEGIN IMMEDIATE')
+        if db.execute('SELECT 1 FROM admin_user').fetchone():
+            raise ValueError('A administração já foi configurada. Entre com sua senha.')
+        db.execute('INSERT INTO admin_user VALUES(1,?,?,?)', (username.strip().lower(), salt, password_hash(password, salt)))
